@@ -1,0 +1,54 @@
+(PostgreSQL)
+
+#1 to view the first five rows of netflix_people table
+SELECT * FROM "CharlotteChaze/BreakIntoTech"."netflix_people" limit 5;
+
+#2 to see how many rows are in netflix_people table
+SELECT COUNT(*) from "CharlotteChaze/BreakIntoTech"."netflix_people"; 
+
+#3 to view the first five rows of netflix_titles_info table
+SELECT * FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" limit 5;
+
+#4 to see how many rows are in netflix_titles_info table
+SELECT COUNT(*) from "CharlotteChaze/BreakIntoTech"."netflix_titles_info";
+
+#5 Joining netflix_titles_info and netflix_people
+SELECT *
+From "CharlotteChaze/BreakIntoTech"."netflix_titles_info" as T1_title
+LEFT JOIN "CharlotteChaze/BreakIntoTech"."netflix_people" as T2_people
+ON T1_title.show_id = T2_people.show_id;
+
+#6 to find out how many movie titles are there in the database excluding TV series 
+SELECT 
+    Count(T1_title.title)
+From "CharlotteChaze/BreakIntoTech"."netflix_titles_info" as T1_title
+WHERE T1_title.type = 'Movie';
+
+#7 to find out when was the most recent batch of tv shows and/or movies added to the database
+SELECT 
+    max(date(T1_title.date_added))
+From "CharlotteChaze/BreakIntoTech"."netflix_titles_info" as T1_title;
+
+#8 to list all the movies and tv shows in alphabetical order
+SELECT 
+    T1_title.title
+From "CharlotteChaze/BreakIntoTech"."netflix_titles_info" as T1_title
+ORDER BY T1_title.title asc;
+
+#9 Joining netflix_titles_info and netflix_people to find who was the Director for the movie Bright Star 
+SELECT 
+    T1_title.title, 
+    T2_people.director
+From "CharlotteChaze/BreakIntoTech"."netflix_titles_info" as T1_title
+LEFT JOIN "CharlotteChaze/BreakIntoTech"."netflix_people" as T2_people
+ON T1_title.show_id = T2_people.show_id
+WHERE T1_title.title = 'Bright Star';
+
+#10  to find the oldest movie in the database and what year was it made 
+    T1_title.title,
+    T1_title.release_year,
+    T1_title.type
+From "CharlotteChaze/BreakIntoTech"."netflix_titles_info" as T1_title
+WHERE T1_title.type = 'Movie'
+ORDER by T1_title.release_year asc
+LIMIT 1;
