@@ -1,12 +1,58 @@
 -- #1 Finding how many orders were placed in January while filtering out messy data
-SELECT COUNT(JanSales.orderID)
+SELECT 
+  COUNT(JanSales.orderID)
 FROM BIT_DB.JanSales as JanSales
 WHERE length(orderID) = 6
 AND orderID <> 'Order ID';
 
 -- #2 Finding how many of those orders were for an iPhone while filtering out messy data
-SELECT COUNT(JanSales.orderID) 
+SELECT 
+  COUNT(JanSales.orderID) 
 FROM BIT_DB.JanSales as JanSales
 WHERE JanSales.Product = 'iPhone' 
+AND length(orderID) = 6
+AND orderID <> 'Order ID';
+
+-- #3 Selecting the customer account numbers for all the orders that were placed in February while filtering out messy data
+SELECT 
+  distinct customers.acctnum
+FROM BIT_DB.customers as customers
+INNER JOIN BIT_DB.FebSales as FebSales
+ON customers.order_id = FebSales.orderID
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID';
+
+-- #4 Finding which product was the cheapest one sold in January, and at what price it was sold
+SELECT 
+    distinct JanSales.Product,
+    JanSales.price
+FROM BIT_DB.JanSales as JanSales
+WHERE  JanSales.price in (SELECT min(JanSales.price) FROM BIT_DB.JanSales);
+
+-- #5 Finding the total revenue for each product sold in January
+SELECT 
+  JanSales.Product,
+  sum(JanSales.Quantity)*JanSales.price as revenue
+FROM BIT_DB.JanSales as JanSales
+GROUP BY JanSales.Product;
+
+-- #6 Finding which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue
+SELECT 
+    FebSales.Product,
+    FebSales.price as Price,
+    sum(FebSales.Quantity)as Total_Sold,
+    sum(FebSales.Quantity)*FebSales.price as Revenue
+FROM BIT_DB.FebSales as FebSales
+WHERE FebSales.location = '548 Lincoln St, Seattle, WA 98101'
+GROUP BY FebSales.Product;
+
+-- #7 Finding how many customers ordered more than 2 products at a time in February and what was the average amount spent for those customers while filtering out messy data
+SELECT
+    count(distinct customers.acctnum),
+    avg(FebSales.Quantity)*FebSales.price as avg_spent
+FROM BIT_DB.FebSales as FebSales
+LEFT JOIN BIT_DB.customers as customers
+ON FebSales.orderID = customers.order_id
+WHERE FebSales.Quantity > 2
 AND length(orderID) = 6
 AND orderID <> 'Order ID';
