@@ -26,7 +26,7 @@ time_signature integer NOT NULL
 
 -- Then I inserted the Spotify Data .csv into the table.
 
--- Below are #1-7. These are some things I wanted to explore within the data set using SQL.
+-- Below are #1-8. These are some things I wanted to explore within the data set using SQL.
 
 -- #1 Finding the the average danceability by artist
 SELECT
@@ -92,3 +92,21 @@ FROM BIT_DB.Spotifydata as Spotifydata
 GROUP BY Spotifydata.track_name
 ORDER BY Spotifydata.popularity desc
 LIMIT 10;
+
+-- #8 Calculating the average popularity for the artists in the Spotify data table. 
+-- Then, for every artist with an average popularity of 90 or above, show their name, their average popularity, and label them as a “Top Star”.
+
+WITH popularity_average_CTE AS (
+  SELECT
+  Spotifydata.artist_name as name,
+  avg(Spotifydata.popularity) as avg_popularity
+  FROM Spotifydata
+  GROUP BY name
+)
+SELECT
+    name,
+    avg_popularity,
+    'Top_Star' as tag
+FROM popularity_average_CTE
+WHERE avg_popularity >= 90
+ORDER BY avg_popularity desc;
